@@ -1,3 +1,4 @@
+const inquirer = require('inquirer');
 const { prompt } = require('inquirer');
 const db = require('./db/connection');
 
@@ -17,16 +18,65 @@ prompt([
             'update an employee role'
         ]
     }
-]).then(choice => {
-    choice == 'add a role' ? addRole() :
-    choice == 'view all roles' ? viewRoles() :
-    choice == 'add a department' ? addDepartment() :
-    choice == 'view all employees' ? viewEmployees() :
-    choice == "view all departments" ? viewDepartments() :
-    choice == 'add an employee' ? addEmployee() 
-    : updateRole()
+]).then(function(choice){
+    switch(choice.options){
+        case 'view all departments':
+            viewDepartments();
+            break;
+        case 'view all roles':
+            viewRoles();
+            break;
+        case 'view all employees':
+            viewEmployees();
+            break;
+        case 'add a department':
+            addDepartment();
+            break;
+        case 'add a role':
+            addRole();
+            break;
+        case 'add an employee':
+            addEmployee();
+            break;
+        case 'update an employee role':
+            updateRole();
+            break;
+        default:
+            console.log('default');
+    }
 });
 
-addRole = () => {
-    
+function addRole() {
+    inquirer.prompt([
+        {
+            name: 'role',
+            type: 'input',
+            message: 'What role would you like to add? '
+        },
+        {
+            name: 'salary',
+            type: 'number',
+            message: 'Please provide a salary: '
+        },
+        {
+            name: 'department_id',
+            type: 'number',
+            message: 'Please enter department id: '
+        }
+    ]).then(answer => {
+        db.query(
+            'INSERT INTO role SET ?',
+            {
+                title: answer.role,
+                salary: answer.salary,
+                department_id: answer.department_id
+            },
+            function (err) {
+                if (err)
+                    throw err;
+
+                console.log('Employee role updated with' + answer.role);
+            }
+        );
+    });
 }

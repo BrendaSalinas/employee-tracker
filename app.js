@@ -45,7 +45,6 @@ prompt([
             console.log('default');
     }
 });
-
 function addRole() {
     inquirer.prompt([
         {

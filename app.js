@@ -1,6 +1,5 @@
 const inquirer = require('inquirer');
 const { prompt } = require('inquirer');
-const { clearLine } = require('inquirer/lib/utils/readline');
 const db = require('./db/connection');
 
 //view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
@@ -80,7 +79,7 @@ function addDepartment() {
             type: 'input',
             message: 'Add the name of the department'
         }
-    ]).then(function(ans) {
+    ]).then(ans => {
         db.query(
             'INSERT INTO department VALUES (default, ?)',
             [ans.department],
@@ -129,4 +128,51 @@ function addRole() {
     });
 };
 
+function addEmployee() {
+    db.query('SELECT * FROM role', (err, res) => {
+        if(err) throw err;
+        inquirer.prompt([
+            {
+                name: 'firstName',
+                type: 'input',
+                message: 'Please enter the employee First name: '
+            },
+            {
+                name: 'lastName',
+                type:'input',
+                message: "Please enter the employee Last name: "
+            },
+            {
+                name: 'role',
+                type: 'rawlist',
+                choices: function() {
+                    var choice = [];
+                    for(i=0; i<res.length; i++) {
+                        choice.push(res[i].title);
+                    }
+                    return choice;
+                },
+                message: 'Select a role'
+            },
+            {
+                name: 'manager',
+                type: 'number',
+                message: 'Please enter manager id: ',
+                default: '1'
+            }
+            
+        ]).then(ans => {
+            db.query(
+                "INSERT INTO employee SET ?",
+                {
+                    first_name: ans.firstName,
+                    last_name: ans.lastName,
+                    role_id: ans.role,
+                    manager_id: ans.manager
+                }
+            )
+            console.log(`We added ${ans.firstName}`)
+        })
+    })
+}
 callback();

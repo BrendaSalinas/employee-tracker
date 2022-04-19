@@ -153,12 +153,6 @@ function addEmployee() {
                     return choice;
                 },
                 message: 'Select a role'
-            },
-            {
-                name: 'manager',
-                type: 'number',
-                message: 'Please enter manager id: ',
-                default: '1'
             }
             
         ]).then(ans => {
@@ -168,10 +162,9 @@ function addEmployee() {
                     first_name: ans.firstName,
                     last_name: ans.lastName,
                     role_id: ans.role,
-                    manager_id: ans.manager
                 }
             )
-            console.log(`We added ${ans.firstName}`)
+            console.log(`We added ${ans.firstName}${ans.lastName}`)
         })
     })
 }
